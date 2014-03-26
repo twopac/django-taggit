@@ -7,7 +7,7 @@ from django.db.models.query import QuerySet
 from django.template.defaultfilters import slugify as default_slugify
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.utils.encoding import python_2_unicode_compatible
-
+from transliterate import translit, get_available_language_codes
 
 @python_2_unicode_compatible
 class TagBase(models.Model):
@@ -22,7 +22,7 @@ class TagBase(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.pk and not self.slug:
-            self.slug = self.slugify(self.name)
+            self.slug = self.slugify(translit(self.name, 'ru', reversed=True)))
             from django.db import router
             using = kwargs.get("using") or router.db_for_write(
                 type(self), instance=self)
